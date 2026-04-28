@@ -4,12 +4,12 @@
 // Copy the firebaseConfig object and paste below
 // ============================================================
 const firebaseConfig = {
-  apiKey:            "REPLACE_WITH_YOUR_API_KEY",
-  authDomain:        "REPLACE_WITH_YOUR_AUTH_DOMAIN",
-  projectId:         "REPLACE_WITH_YOUR_PROJECT_ID",
-  storageBucket:     "REPLACE_WITH_YOUR_STORAGE_BUCKET",
-  messagingSenderId: "REPLACE_WITH_YOUR_MESSAGING_SENDER_ID",
-  appId:             "REPLACE_WITH_YOUR_APP_ID"
+  apiKey: "AIzaSyD2hsah_Ny9c6kjX4_e-DsOUeyzWJmx57A",
+  authDomain: "bro-trip-2026-thai-happy.firebaseapp.com",
+  projectId: "bro-trip-2026-thai-happy",
+  storageBucket: "bro-trip-2026-thai-happy.firebasestorage.app",
+  messagingSenderId: "684584318593",
+  appId: "1:684584318593:web:0864e3d0327d508efdbf80"
 };
 
 // ============================================================
