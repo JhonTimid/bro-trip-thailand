@@ -1,111 +1,114 @@
 // ============================================================
-// FIREBASE CONFIG — replace these values with your own project
-// Go to: console.firebase.google.com → Add project → Web app
-// Copy the firebaseConfig object and paste below
+// FIREBASE CONFIG
 // ============================================================
 const firebaseConfig = {
-  apiKey: "AIzaSyD2hsah_Ny9c6kjX4_e-DsOUeyzWJmx57A",
-  authDomain: "bro-trip-2026-thai-happy.firebaseapp.com",
-  projectId: "bro-trip-2026-thai-happy",
-  storageBucket: "bro-trip-2026-thai-happy.firebasestorage.app",
+  apiKey:            "AIzaSyD2hsah_Ny9c6kjX4_e-DsOUeyzWJmx57A",
+  authDomain:        "bro-trip-2026-thai-happy.firebaseapp.com",
+  projectId:         "bro-trip-2026-thai-happy",
+  storageBucket:     "bro-trip-2026-thai-happy.firebasestorage.app",
   messagingSenderId: "684584318593",
-  appId: "1:684584318593:web:0864e3d0327d508efdbf80"
+  appId:             "1:684584318593:web:0864e3d0327d508efdbf80"
 };
 
-// ============================================================
-// INIT FIREBASE
-// ============================================================
 firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
-const TRIP_DOC  = db.collection('trips').doc('bro-trip-2026');
-const DAYS_COL  = db.collection('trips').doc('bro-trip-2026').collection('days');
+const db       = firebase.firestore();
+const TRIP_DOC = db.collection('trips').doc('bro-trip-2026');
+const DAYS_COL = db.collection('trips').doc('bro-trip-2026').collection('days');
 
 // ============================================================
-// DEFAULT TRIP DATA (used only on first load / reset)
+// DEFAULT TRIP DATA
 // ============================================================
 const defaultDays = [
   {
-    id: 'day1', num: 'DAY 1', title: 'Touchdown Bangkok', location: 'Bangkok',
-    vibe: '✈️ Easy landing day — save energy for what\'s coming',
+    id: 'day1', num: 'DAY 1', order: 0,
+    title: 'Touchdown Bangkok', location: 'Bangkok',
+    vibe: '\u2708\ufe0f Easy landing day \u2014 save energy for what\'s coming',
     activities: [
-      'Land at Suvarnabhumi Airport, grab a SIM card',
-      'Check in near Asok / Sukhumvit area',
-      'Late lunch at Terminal 21 Asok food court',
-      'Evening walk around Sukhumvit Neon Strip',
-      'Late Thai massage to recover from the flight',
-      'Quick street food dinner — Pad Thai, mango sticky rice'
+      { time: 'Arrival',    title: 'Land at Suvarnabhumi, grab a SIM card',       price: 'Free SIM ~THB 299',     description: 'AIS or DTAC counters right after customs' },
+      { time: 'Afternoon',  title: 'Check in near Asok / Sukhumvit',               price: 'Hotel TBD',             description: 'Drop bags, freshen up, explore the area' },
+      { time: '13:00',      title: 'Lunch at Terminal 21 Asok food court',         price: 'THB 60\u2013120 / meal', description: 'Top floor food court \u2014 legendary cheap eats' },
+      { time: 'Evening',    title: 'Sukhumvit Neon Strip walk',                    price: 'Free',                  description: 'Vibe check, grab street snacks' },
+      { time: '21:00+',     title: 'Late Thai massage to recover from flight',      price: 'THB 250\u2013400 / hr',  description: 'Healthy Massage Sukhumvit 19 \u2014 open till midnight' },
+      { time: 'Night',      title: 'Street food dinner \u2014 Pad Thai, mango sticky rice', price: 'THB 80\u2013150',   description: 'Grab from a street cart or night market' }
     ]
   },
   {
-    id: 'day2', num: 'DAY 2', title: 'Bangkok → Pattaya', location: 'Bangkok → Pattaya',
-    vibe: '🚌 Road trip vibes — Pattaya awaits',
+    id: 'day2', num: 'DAY 2', order: 1,
+    title: 'Bangkok \u2192 Pattaya', location: 'Bangkok \u2192 Pattaya',
+    vibe: '\ud83d\ude8c Road trip vibes \u2014 Pattaya awaits',
     activities: [
-      'Morning hotel breakfast',
-      'Grab a minivan / taxi to Pattaya (~2 hrs)',
-      'Check in to hotel near Beach Road or Central Pattaya',
-      'Afternoon chill at the beach, explore the strip',
-      'Seafood dinner by the ocean',
-      'First taste of Walking Street nightlife 🍻'
+      { time: '08:00',     title: 'Hotel breakfast',                               price: 'Included / THB 150',    description: 'Fuel up before the road' },
+      { time: '09:30',     title: 'Minivan / taxi to Pattaya',                     price: 'THB 130\u2013160 bus / THB 1,200 taxi', description: '~2 hrs, departs Ekkamai or On Nut' },
+      { time: 'Afternoon', title: 'Check in near Beach Road or Central Pattaya',   price: 'Hotel TBD',             description: 'Base yourself close to Walking Street' },
+      { time: '15:00',     title: 'Beach chill + explore the strip',               price: 'Free',                  description: 'Pattaya Beach Road, grab a coconut' },
+      { time: '19:00',     title: 'Seafood dinner by the ocean',                   price: 'THB 400\u2013800 / person', description: 'Nong Nuch or beachfront seafood restaurants' },
+      { time: '22:00+',    title: 'First taste of Walking Street nightlife',       price: 'THB 500\u20131,500 est.', description: 'Bars, clubs, live music \u2014 welcome to Pattaya \ud83c\udf7b' }
     ]
   },
   {
-    id: 'day3', num: 'DAY 3', title: 'Shoot, Swim & Sin City', location: 'Pattaya',
-    vibe: '🔫💦 Action-packed — guns in the morning, water in the afternoon',
+    id: 'day3', num: 'DAY 3', order: 2,
+    title: 'Shoot, Swim & Sin City', location: 'Pattaya',
+    vibe: '\ud83d\udd2b\ud83d\udca6 Guns in the morning, water in the afternoon',
     activities: [
-      'Morning: Dragon Shooting Club (rated 4.8⭐) — rifles, pistols, shotguns',
-      'Lunch: local Thai spot near Pattaya Beach',
-      'Afternoon: Jet ski at Jomtien Beach (TSA Thailand, rated 5.0⭐)',
-      'Optional: parasailing or banana boat',
-      'Pre-drinks at the hotel',
-      'Night: Walking Street adult show (69 Show / Big Eye 99) + bar crawl'
+      { time: '09:00\u201311:00', title: 'Dragon Shooting Club',                  price: 'THB 1,500\u20132,500',  description: 'Rated 4.8\u2b50 \u2014 rifles, pistols, shotguns. Ear protection provided.' },
+      { time: '12:00',           title: 'Lunch near Pattaya Beach',               price: 'THB 150\u2013300',      description: 'Local Thai spot, avoid tourist traps' },
+      { time: '13:30\u201316:30', title: 'Jet ski at Jomtien Beach',              price: 'THB 800\u20131,200 / 20 mins', description: 'TSA Thailand rated 5.0\u2b50 \u2014 book ahead, life jacket included' },
+      { time: '15:00',           title: 'Parasailing or banana boat',             price: 'THB 500\u2013800',      description: 'Optional add-on at Jomtien Beach' },
+      { time: '20:00',           title: 'Pre-drinks at hotel',                    price: 'THB 200\u2013400',      description: 'Grab beers from 7-Eleven and pre-game' },
+      { time: '22:00+',          title: 'Walking Street adult show + bar crawl',  price: 'THB 1,000\u20132,000',  description: '69 Show or Big Eye 99, then hit the bars' }
     ]
   },
   {
-    id: 'day4', num: 'DAY 4', title: 'Island & Adrenaline Day', location: 'Pattaya',
-    vibe: '🏝️ Go big — this is the highlight day',
+    id: 'day4', num: 'DAY 4', order: 3,
+    title: 'Island & Adrenaline Day', location: 'Pattaya',
+    vibe: '\ud83c\udfdd\ufe0f Go big \u2014 this is the highlight day',
     activities: [
-      'Morning: speedboat to Koh Larn island',
-      'Snorkeling, beach time, grilled seafood on the island',
-      'Afternoon: parasailing or paramotor over the sea',
-      'Optional: ATV off-road or flyboarding on mainland',
-      'Sunset beers by Pattaya Beach',
-      'Night: last night in Pattaya — hit Walking Street hard 🔥'
+      { time: '08:00',           title: 'Speedboat to Koh Larn island',           price: 'THB 30 ferry / THB 1,500 speedboat', description: 'Ferry from Bali Hai Pier, ~45 mins' },
+      { time: '09:30\u201312:00', title: 'Snorkeling + beach time on Koh Larn',   price: 'THB 300\u2013500',      description: 'Tawaen or Samae beach, crystal clear water' },
+      { time: '12:30',           title: 'Grilled seafood on the island',          price: 'THB 400\u2013700',      description: 'Fresh grilled fish and prawns beachside' },
+      { time: '14:00',           title: 'Parasailing or paramotor over the sea',  price: 'THB 800\u20131,500',    description: 'Best views of Pattaya from the air' },
+      { time: '16:00',           title: 'ATV off-road or flyboarding (mainland)', price: 'THB 600\u20131,200',    description: 'Optional \u2014 book in advance' },
+      { time: '18:30',           title: 'Sunset beers by Pattaya Beach',          price: 'THB 200\u2013400',      description: 'Last sunset in Pattaya \u2014 enjoy it' },
+      { time: '22:00+',          title: 'Last night \u2014 hit Walking Street hard', price: 'THB 1,500\u20132,500', description: '\ud83d\udd25 Make it count \u2014 final Pattaya night' }
     ]
   },
   {
-    id: 'day5', num: 'DAY 5', title: 'Back to Bangkok', location: 'Pattaya → Bangkok',
-    vibe: '🏙️ Return to the city — polish mode activated',
+    id: 'day5', num: 'DAY 5', order: 4,
+    title: 'Back to Bangkok', location: 'Pattaya \u2192 Bangkok',
+    vibe: '\ud83c\udfd9\ufe0f Return to the city \u2014 polish mode activated',
     activities: [
-      'Late checkout, grab brunch before leaving',
-      'Transfer back to Bangkok (~2 hrs)',
-      'Check into second Bangkok hotel near Asok/Siam',
-      'Afternoon shopping at ICONSIAM — luxury brands + indoor floating market',
-      'Dinner at a rooftop Bangkok restaurant with skyline view',
-      'Chill night — bars around Thong Lo or Ekkamai'
+      { time: '10:00',     title: 'Late checkout + brunch',                        price: 'THB 200\u2013400',      description: 'Last Pattaya meal \u2014 make it a good one' },
+      { time: '12:00',     title: 'Transfer back to Bangkok',                      price: 'THB 130\u2013160 bus',  description: '~2 hrs, departs Pattaya bus terminal' },
+      { time: '14:30',     title: 'Check into second Bangkok hotel',               price: 'Hotel TBD',             description: 'Asok or Siam area, central location' },
+      { time: '16:00',     title: 'Shopping at ICONSIAM',                          price: 'Budget as needed',      description: 'Luxury brands + indoor floating market, Chao Phraya riverside' },
+      { time: '19:30',     title: 'Rooftop dinner with Bangkok skyline view',      price: 'THB 800\u20131,500 / person', description: 'Book a table in advance, dress smart' },
+      { time: '22:00',     title: 'Chill night \u2014 Thong Lo or Ekkamai bars',  price: 'THB 400\u2013800',      description: 'More upscale vibe, good cocktails' }
     ]
   },
   {
-    id: 'day6', num: 'DAY 6', title: 'Bangkok Slay Day', location: 'Bangkok',
-    vibe: '🛍️💆 Shopping, eats, and spa recovery',
+    id: 'day6', num: 'DAY 6', order: 5,
+    title: 'Bangkok Slay Day', location: 'Bangkok',
+    vibe: '\ud83d\udecd\ufe0f\ud83d\udc86 Shopping, eats, and spa recovery',
     activities: [
-      'Morning: Chatuchak Weekend Market or MBK Center for bargain shopping',
-      'Street food lunch — khao man gai, boat noodles, mango sticky rice',
-      'Afternoon: full Thai massage at Health Land Asoke (open till 11pm)',
-      'Terminal 21 Asok for final souvenirs and fashion',
-      'Dinner: Yaowarat Chinatown for legendary street food',
-      'Night: Khao San Road or RCA for one last big night 🎉'
+      { time: '10:00',     title: 'Chatuchak Weekend Market or MBK Center',        price: 'Budget as needed',      description: 'Chatuchak for unique finds, MBK for electronics + clothes' },
+      { time: '13:00',     title: 'Street food lunch',                             price: 'THB 80\u2013150',       description: 'Khao man gai, boat noodles, mango sticky rice' },
+      { time: '15:00',     title: 'Full Thai massage at Health Land Asoke',        price: 'THB 550\u2013800 / 2 hrs', description: 'Rated 4.2\u2b50, open till 11pm \u2014 book ahead' },
+      { time: '17:30',     title: 'Terminal 21 Asok for souvenirs + fashion',      price: 'Budget as needed',      description: 'Best food court in Bangkok on the top floor too' },
+      { time: '19:30',     title: 'Yaowarat Chinatown street food dinner',         price: 'THB 300\u2013600',      description: 'Legendary night market \u2014 roast duck, oyster omelette, dim sum' },
+      { time: '22:00+',    title: 'Khao San Road or RCA final big night',         price: 'THB 600\u20131,200',    description: '\ud83c\udf89 Last proper night out \u2014 go all in' }
     ]
   },
   {
-    id: 'day7', num: 'DAY 7', title: 'Final Day & Fly Home', location: 'Bangkok',
-    vibe: '😢 Last day — make it count',
+    id: 'day7', num: 'DAY 7', order: 6,
+    title: 'Final Day & Fly Home', location: 'Bangkok',
+    vibe: '\ud83d\ude22 Last day \u2014 make it count',
     activities: [
-      'Slow morning, hotel breakfast',
-      'Last-minute shopping — gifts, snacks, Thai tea',
-      'Final Thai massage or foot massage',
-      'Pad Thai from a legendary street stall',
-      'Airport transfer — Suvarnabhumi or Don Mueang',
-      'Board the plane with the best memories 🇹🇭✈️'
+      { time: '09:00',     title: 'Slow morning + hotel breakfast',                price: 'Included / THB 150',    description: 'No rush, enjoy the last morning' },
+      { time: '11:00',     title: 'Last-minute shopping',                          price: 'Budget as needed',      description: 'Gifts, Thai snacks, cha yen (Thai iced tea)' },
+      { time: '13:00',     title: 'Final Thai massage or foot massage',            price: 'THB 250\u2013400 / hr',  description: 'One last session before the flight' },
+      { time: '15:00',     title: 'Pad Thai from a legendary street stall',       price: 'THB 60\u2013100',       description: 'Tip Samai near Wat Saket is the OG' },
+      { time: '17:00+',    title: 'Airport transfer',                              price: 'THB 200\u2013350 taxi',  description: 'Suvarnabhumi or Don Mueang \u2014 allow 2 hrs before flight' },
+      { time: 'Departure', title: 'Board the plane with the best memories',       price: 'Priceless \ud83c\uddf9\ud83c\udded', description: 'See you on the next one \u2708\ufe0f' }
     ]
   }
 ];
@@ -114,50 +117,50 @@ const defaultDays = [
 // STATE
 // ============================================================
 let days = JSON.parse(JSON.stringify(defaultDays));
-let tripSettings = { dates: '', people: '', tagline: '' };
-let logistics = {};
-let editModeOpen = false;
-let currentEditDay = null;
+let tripSettings    = { dates: '', people: '', tagline: '' };
+let logistics       = {};
+let editModeOpen    = false;
+let currentEditDay  = null;
 let currentLogisticsKey = null;
-let firestoreReady = false;
+let firestoreReady  = false;
 
 const logisticsConfig = {
   flight: {
     title: 'Edit Flight Details',
     fields: [
-      { id: 'flightOutVal',    label: 'Outbound Flight',  placeholder: 'CX757 HKG→BKK, 29 May 08:00' },
-      { id: 'flightReturnVal', label: 'Return Flight',    placeholder: 'CX758 BKK→HKG, 4 Jun 22:00' }
+      { id: 'flightOutVal',    label: 'Outbound Flight',  placeholder: 'CX757 HKG\u2192BKK, 29 May 08:00' },
+      { id: 'flightReturnVal', label: 'Return Flight',    placeholder: 'CX758 BKK\u2192HKG, 4 Jun 22:00'  }
     ],
     displayIds: ['flightOut', 'flightReturn']
   },
   hotelBKK1: {
     title: 'Bangkok Hotel (Arrival Night)',
     fields: [
-      { id: 'hotelBKK1Name', label: 'Hotel Name',                    placeholder: 'e.g. Novotel Sukhumvit 20' },
-      { id: 'hotelBKK1Info', label: 'Check-in / Check-out / Address', placeholder: '29 May – 30 May · Sukhumvit Soi 20' }
+      { id: 'hotelBKK1Name', label: 'Hotel Name',                     placeholder: 'e.g. Novotel Sukhumvit 20' },
+      { id: 'hotelBKK1Info', label: 'Check-in / Check-out / Address', placeholder: '29 May \u2013 30 May \u00b7 Sukhumvit Soi 20' }
     ],
     displayIds: ['hotelBKK1', 'hotelBKK1Sub']
   },
   hotelPAT: {
     title: 'Pattaya Hotel (3 Nights)',
     fields: [
-      { id: 'hotelPATName', label: 'Hotel Name',                    placeholder: 'e.g. Amari Pattaya' },
-      { id: 'hotelPATInfo', label: 'Check-in / Check-out / Address', placeholder: '30 May – 2 Jun · Beach Road' }
+      { id: 'hotelPATName', label: 'Hotel Name',                     placeholder: 'e.g. Amari Pattaya' },
+      { id: 'hotelPATInfo', label: 'Check-in / Check-out / Address', placeholder: '30 May \u2013 2 Jun \u00b7 Beach Road' }
     ],
     displayIds: ['hotelPAT', 'hotelPATSub']
   },
   hotelBKK2: {
     title: 'Bangkok Hotel (Return, 3 Nights)',
     fields: [
-      { id: 'hotelBKK2Name', label: 'Hotel Name',                    placeholder: 'e.g. Kimpton Maa-Lai Bangkok' },
-      { id: 'hotelBKK2Info', label: 'Check-in / Check-out / Address', placeholder: '2 Jun – 4 Jun · Sukhumvit' }
+      { id: 'hotelBKK2Name', label: 'Hotel Name',                     placeholder: 'e.g. Kimpton Maa-Lai Bangkok' },
+      { id: 'hotelBKK2Info', label: 'Check-in / Check-out / Address', placeholder: '2 Jun \u2013 4 Jun \u00b7 Sukhumvit' }
     ],
     displayIds: ['hotelBKK2', 'hotelBKK2Sub']
   }
 };
 
 // ============================================================
-// SYNC STATUS UI
+// SYNC STATUS
 // ============================================================
 function setSyncStatus(state, msg) {
   const bar = document.getElementById('syncBar');
@@ -167,10 +170,9 @@ function setSyncStatus(state, msg) {
 }
 
 // ============================================================
-// FIRESTORE — LISTENERS (real-time)
+// FIRESTORE LISTENERS
 // ============================================================
 function startListeners() {
-  // Trip settings + logistics
   TRIP_DOC.onSnapshot(snap => {
     if (snap.exists) {
       const data = snap.data();
@@ -179,13 +181,12 @@ function startListeners() {
     }
     if (!firestoreReady) {
       firestoreReady = true;
-      setSyncStatus('synced', '<i class="fa fa-circle-check"></i> Live sync active — edits update for everyone instantly');
+      setSyncStatus('synced', '<i class="fa fa-circle-check"></i> Live sync active \u2014 edits update for everyone instantly');
     }
   }, err => {
-    setSyncStatus('error', '<i class="fa fa-triangle-exclamation"></i> Sync error: ' + err.message + ' — check Firebase config in app.js');
+    setSyncStatus('error', '<i class="fa fa-triangle-exclamation"></i> Sync error: ' + err.message);
   });
 
-  // Days collection (ordered)
   DAYS_COL.orderBy('order').onSnapshot(snap => {
     if (!snap.empty) {
       days = snap.docs.map(d => ({ id: d.id, ...d.data() }));
@@ -195,26 +196,24 @@ function startListeners() {
 }
 
 // ============================================================
-// FIRESTORE — SEED DEFAULT DATA
+// SEED DEFAULTS
 // ============================================================
 async function seedDefaults() {
   const snap = await TRIP_DOC.get();
-  if (!snap.exists) {
-    await TRIP_DOC.set({ settings: tripSettings, logistics: {} });
-  }
+  if (!snap.exists) await TRIP_DOC.set({ settings: tripSettings, logistics: {} });
+
   const daysSnap = await DAYS_COL.limit(1).get();
   if (daysSnap.empty) {
     const batch = db.batch();
     defaultDays.forEach((day, i) => {
-      const ref = DAYS_COL.doc(day.id);
-      batch.set(ref, { ...day, order: i });
+      batch.set(DAYS_COL.doc(day.id), { ...day, order: i });
     });
     await batch.commit();
   }
 }
 
 // ============================================================
-// RENDER
+// RENDER DAYS
 // ============================================================
 function renderDays() {
   const grid = document.getElementById('daysGrid');
@@ -222,6 +221,21 @@ function renderDays() {
   days.forEach((day, idx) => {
     const card = document.createElement('div');
     card.className = 'day-card';
+    const activitiesHtml = (day.activities || []).map(a => {
+      if (typeof a === 'string') {
+        return `<li class="activity-row"><div class="activity-time"></div><div class="activity-main"><div class="activity-title">${escHtml(a)}</div></div><div class="activity-price"></div></li>`;
+      }
+      return `
+        <li class="activity-row">
+          <div class="activity-time">${escHtml(a.time || '')}</div>
+          <div class="activity-main">
+            <div class="activity-title">${escHtml(a.title || '')}</div>
+            ${a.description ? `<div class="activity-desc">${escHtml(a.description)}</div>` : ''}
+          </div>
+          <div class="activity-price">${escHtml(a.price || '')}</div>
+        </li>`;
+    }).join('');
+
     card.innerHTML = `
       <div class="day-header">
         <span class="day-num">${escHtml(day.num)}</span>
@@ -231,14 +245,15 @@ function renderDays() {
       </div>
       <div class="day-body">
         ${day.vibe ? `<p class="day-vibe">${escHtml(day.vibe)}</p>` : ''}
-        <ul class="day-activities">
-          ${(day.activities||[]).map(a => `<li>${escHtml(a)}</li>`).join('')}
-        </ul>
+        <ul class="day-activities">${activitiesHtml}</ul>
       </div>`;
     grid.appendChild(card);
   });
 }
 
+// ============================================================
+// RENDER LOGISTICS
+// ============================================================
 function renderLogistics() {
   const map = {
     flightOut:    'flightOutVal',
@@ -256,6 +271,9 @@ function renderLogistics() {
   });
 }
 
+// ============================================================
+// RENDER TRIP SETTINGS
+// ============================================================
 function renderTripSettings() {
   if (tripSettings.dates)
     document.getElementById('heroDateDisplay').innerHTML = `<i class="fa fa-calendar"></i> ${escHtml(tripSettings.dates)}`;
@@ -290,27 +308,80 @@ async function saveTripSettings() {
 }
 
 // ============================================================
-// DAY EDIT
+// ACTIVITY EDITOR HELPERS
+// ============================================================
+function renderActivitiesEditor(activities) {
+  const container = document.getElementById('activitiesEditor');
+  container.innerHTML = '';
+  (activities || []).forEach((a, i) => _appendActivityRow(container, a, i));
+}
+
+function addActivityRow() {
+  const container = document.getElementById('activitiesEditor');
+  _appendActivityRow(container, {}, container.children.length);
+}
+
+function _appendActivityRow(container, a, idx) {
+  const wrapper = document.createElement('div');
+  wrapper.className = 'activity-edit-block';
+  wrapper.innerHTML = `
+    <div class="activity-edit-row">
+      <div class="aef">
+        <label>Time</label>
+        <input class="activity-input" data-field="time"        placeholder="e.g. 09:00\u201311:00" value="${escHtml(a.time||'')}" />
+      </div>
+      <div class="aef">
+        <label>Price / Budget</label>
+        <input class="activity-input" data-field="price"       placeholder="e.g. THB 1,500" value="${escHtml(a.price||'')}" />
+      </div>
+    </div>
+    <div class="aef" style="margin-top:0.4rem">
+      <label>Activity Title</label>
+      <input class="activity-input" data-field="title"       placeholder="e.g. Dragon Shooting Club" value="${escHtml(a.title||'')}" />
+    </div>
+    <div class="aef" style="margin-top:0.4rem">
+      <label>Description / Notes</label>
+      <input class="activity-input" data-field="description" placeholder="e.g. Book taxi both ways, ear protection provided" value="${escHtml(a.description||'')}" />
+    </div>
+    <button class="remove-activity-btn" type="button" onclick="this.closest('.activity-edit-block').remove()"><i class="fa fa-trash"></i> Remove</button>
+  `;
+  container.appendChild(wrapper);
+}
+
+function collectActivities() {
+  const blocks = document.querySelectorAll('#activitiesEditor .activity-edit-block');
+  const result = [];
+  blocks.forEach(block => {
+    const inputs = block.querySelectorAll('.activity-input');
+    const obj = {};
+    inputs.forEach(inp => { obj[inp.getAttribute('data-field')] = inp.value.trim(); });
+    if (obj.title || obj.time || obj.description || obj.price) result.push(obj);
+  });
+  return result;
+}
+
+// ============================================================
+// DAY EDIT MODAL
 // ============================================================
 function openDayEdit(idx) {
   currentEditDay = idx;
   const day = days[idx];
-  document.getElementById('dayModalTitle').textContent    = `Edit ${day.num}`;
-  document.getElementById('dayEditTitle').value          = day.title;
-  document.getElementById('dayEditLocation').value       = day.location;
-  document.getElementById('dayEditActivities').value     = (day.activities||[]).join('\n');
-  document.getElementById('dayEditVibe').value           = day.vibe || '';
-  document.getElementById('dayModal').style.display      = 'flex';
+  document.getElementById('dayModalTitle').textContent = `Edit ${day.num}`;
+  document.getElementById('dayEditTitle').value        = day.title;
+  document.getElementById('dayEditLocation').value     = day.location;
+  document.getElementById('dayEditVibe').value         = day.vibe || '';
+  renderActivitiesEditor(day.activities || []);
+  document.getElementById('dayModal').style.display    = 'flex';
 }
 
 async function saveDayEdit() {
   if (currentEditDay === null) return;
   const day = days[currentEditDay];
   const updated = {
-    title:      document.getElementById('dayEditTitle').value.trim()      || day.title,
-    location:   document.getElementById('dayEditLocation').value.trim()   || day.location,
-    activities: document.getElementById('dayEditActivities').value.split('\n').map(s=>s.trim()).filter(Boolean),
-    vibe:       document.getElementById('dayEditVibe').value.trim()
+    title:      document.getElementById('dayEditTitle').value.trim()    || day.title,
+    location:   document.getElementById('dayEditLocation').value.trim() || day.location,
+    vibe:       document.getElementById('dayEditVibe').value.trim(),
+    activities: collectActivities()
   };
   await DAYS_COL.doc(day.id).update(updated);
   document.getElementById('dayModal').style.display = 'none';
@@ -321,7 +392,7 @@ function closeDayModal(e) {
 }
 
 // ============================================================
-// LOGISTICS EDIT
+// LOGISTICS MODAL
 // ============================================================
 function editLogistics(key) {
   currentLogisticsKey = key;
@@ -365,7 +436,7 @@ function switchMap(city, e) {
 // ============================================================
 function escHtml(str) {
   if (!str) return '';
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
 }
 
 // ============================================================
@@ -373,18 +444,6 @@ function escHtml(str) {
 // ============================================================
 window.addEventListener('DOMContentLoaded', async () => {
   setSyncStatus('connecting', '<i class="fa fa-circle-notch fa-spin"></i> Connecting to live sync...');
-  
-  // Check if Firebase is configured
-  if (firebaseConfig.apiKey === 'REPLACE_WITH_YOUR_API_KEY') {
-    setSyncStatus('error',
-      '<i class="fa fa-triangle-exclamation"></i> Firebase not configured yet. '
-      + '<a href="https://github.com/JhonTimid/bro-trip-thailand#firebase-setup" target="_blank">Follow setup steps →</a>'
-    );
-    // Fall back to local render
-    renderDays();
-    return;
-  }
-  
   try {
     await seedDefaults();
     startListeners();
