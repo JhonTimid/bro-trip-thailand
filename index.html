@@ -10,13 +10,18 @@
 </head>
 <body>
 
+<!-- SYNC STATUS BAR -->
+<div class="sync-bar" id="syncBar">
+  <span id="syncStatus"><i class="fa fa-circle-notch fa-spin"></i> Connecting to live sync...</span>
+</div>
+
 <!-- HERO SECTION -->
 <header class="hero">
   <div class="hero-overlay"></div>
   <div class="hero-content">
     <span class="hero-badge">BRO TRIP 2026</span>
     <h1>🇹🇭 Bangkok &amp; Pattaya</h1>
-    <p class="hero-sub">7 Days · Adventure · Nightlife · Good Food · Vibes</p>
+    <p class="hero-sub" id="heroTagline">7 Days · Adventure · Nightlife · Good Food · Vibes</p>
     <div class="hero-meta" id="heroMeta">
       <span id="heroDateDisplay"><i class="fa fa-calendar"></i> Dates TBD</span>
       <span id="heroPeopleDisplay"><i class="fa fa-users"></i> The Bros</span>
@@ -43,7 +48,7 @@
       <label>Trip Title / Tagline</label>
       <input type="text" id="editTagline" placeholder="e.g. The Final Tour" />
     </div>
-    <button class="save-btn" onclick="saveTripSettings()"><i class="fa fa-check"></i> Save Changes</button>
+    <button class="save-btn" onclick="saveTripSettings()"><i class="fa fa-check"></i> Save &amp; Sync</button>
     <button class="cancel-btn" onclick="toggleEditMode()"><i class="fa fa-times"></i> Close</button>
   </div>
 </div>
@@ -53,39 +58,34 @@
   <div class="container">
     <h2 class="section-title"><i class="fa fa-plane"></i> Flights &amp; Hotels</h2>
     <div class="logistics-grid" id="logisticsGrid">
-
-      <div class="logistics-card" id="flightCard">
+      <div class="logistics-card">
         <div class="logistics-icon"><i class="fa fa-plane-departure"></i></div>
         <h4>Outbound Flight</h4>
         <p id="flightOut" class="detail-text">✏️ Click Edit to add flight details</p>
         <p id="flightReturn" class="detail-text muted"></p>
         <button class="small-edit" onclick="editLogistics('flight')"><i class="fa fa-pen"></i> Edit</button>
       </div>
-
-      <div class="logistics-card" id="hotelBKK1Card">
+      <div class="logistics-card">
         <div class="logistics-icon"><i class="fa fa-bed"></i></div>
         <h4>Bangkok Hotel (Arrival)</h4>
         <p id="hotelBKK1" class="detail-text">✏️ Click Edit to add hotel</p>
         <p id="hotelBKK1Sub" class="detail-text muted"></p>
         <button class="small-edit" onclick="editLogistics('hotelBKK1')"><i class="fa fa-pen"></i> Edit</button>
       </div>
-
-      <div class="logistics-card" id="hotelPATCard">
+      <div class="logistics-card">
         <div class="logistics-icon"><i class="fa fa-umbrella-beach"></i></div>
         <h4>Pattaya Hotel</h4>
         <p id="hotelPAT" class="detail-text">✏️ Click Edit to add hotel</p>
         <p id="hotelPATSub" class="detail-text muted"></p>
         <button class="small-edit" onclick="editLogistics('hotelPAT')"><i class="fa fa-pen"></i> Edit</button>
       </div>
-
-      <div class="logistics-card" id="hotelBKK2Card">
+      <div class="logistics-card">
         <div class="logistics-icon"><i class="fa fa-city"></i></div>
         <h4>Bangkok Hotel (Return)</h4>
         <p id="hotelBKK2" class="detail-text">✏️ Click Edit to add hotel</p>
         <p id="hotelBKK2Sub" class="detail-text muted"></p>
         <button class="small-edit" onclick="editLogistics('hotelBKK2')"><i class="fa fa-pen"></i> Edit</button>
       </div>
-
     </div>
   </div>
 </section>
@@ -96,7 +96,7 @@
     <h3 id="modalTitle">Edit Details</h3>
     <div id="modalFields"></div>
     <div class="modal-actions">
-      <button class="save-btn" onclick="saveLogistics()"><i class="fa fa-check"></i> Save</button>
+      <button class="save-btn" onclick="saveLogistics()"><i class="fa fa-check"></i> Save &amp; Sync</button>
       <button class="cancel-btn" onclick="document.getElementById('logisticsModal').style.display='none'"><i class="fa fa-times"></i> Cancel</button>
     </div>
   </div>
@@ -115,19 +115,15 @@
   <div class="container">
     <h2 class="section-title"><i class="fa fa-map-location-dot"></i> Trip Map</h2>
     <div class="map-tabs">
-      <button class="map-tab active" onclick="switchMap('bangkok')">Bangkok</button>
-      <button class="map-tab" onclick="switchMap('pattaya')">Pattaya</button>
+      <button class="map-tab active" onclick="switchMap('bangkok', event)">Bangkok</button>
+      <button class="map-tab" onclick="switchMap('pattaya', event)">Pattaya</button>
     </div>
     <div class="map-wrapper">
       <iframe
         id="mapFrame"
         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d496116.2836905714!2d100.36529264999999!3d13.724663299999998!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x311d6032280d61f3%3A0x10100b25de24820!2sBangkok%2C%20Thailand!5e0!3m2!1sen!2shk!4v1714300000000!5m2!1sen!2shk"
-        width="100%"
-        height="480"
-        style="border:0;"
-        allowfullscreen=""
-        loading="lazy"
-        referrerpolicy="no-referrer-when-downgrade">
+        width="100%" height="480" style="border:0;"
+        allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade">
       </iframe>
     </div>
     <p class="map-note"><i class="fa fa-info-circle"></i> Switch between Bangkok and Pattaya to explore key spots</p>
@@ -148,14 +144,14 @@
     </div>
     <div class="edit-row">
       <label>Activities (one per line)</label>
-      <textarea id="dayEditActivities" rows="6" placeholder="Shooting range&#10;Jet ski at Jomtien&#10;Seafood dinner"></textarea>
+      <textarea id="dayEditActivities" rows="7" placeholder="Shooting range&#10;Jet ski at Jomtien&#10;Seafood dinner"></textarea>
     </div>
     <div class="edit-row">
       <label>Vibe / Notes</label>
       <input type="text" id="dayEditVibe" placeholder="e.g. 🔥 Go hard tonight" />
     </div>
     <div class="modal-actions">
-      <button class="save-btn" onclick="saveDayEdit()"><i class="fa fa-check"></i> Save Day</button>
+      <button class="save-btn" onclick="saveDayEdit()"><i class="fa fa-check"></i> Save &amp; Sync</button>
       <button class="cancel-btn" onclick="document.getElementById('dayModal').style.display='none'"><i class="fa fa-times"></i> Cancel</button>
     </div>
   </div>
@@ -166,6 +162,9 @@
   <p>✈️ Bangkok & Pattaya · BRO TRIP 2026 · Made with <span style="color:#e25555">♥</span> for the squad</p>
 </footer>
 
+<!-- FIREBASE SDK (v9 compat) -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
